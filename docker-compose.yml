@@ -1,0 +1,16 @@
+services:
+  api-gateway:
+    build:
+      context: ./api-gateaway
+      dockerfile: Dockerfile
+    ports:
+      - '3000:3000'
+    depends_on:
+      - user-service
+    environment:
+      - USER_SERVICE_HOST=user-service
+      - USER_SERVICE_PORT=3001
+  user-service:
+    build:
+      context: ./users
+      dockerfile: Dockerfile
