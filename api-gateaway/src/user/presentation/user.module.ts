@@ -3,6 +3,7 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
 import { UserController } from './user.controller';
 import { ServiceName } from 'src/shared/infrastructure/enums/service-name.enum';
 import { ConfigService } from '@nestjs/config';
+import { config } from 'process';
 
 @Module({
   imports: [
@@ -13,9 +14,15 @@ import { ConfigService } from '@nestjs/config';
           transport: Transport.RMQ,
           options: {
             urls: [configService.getOrThrow<string>('RABBITMQ_URL')],
-            queue: configService.get<string>('RABBITMQ_USER_QUEUE', 'user_queue'),
+            queue: configService.get<string>(
+              'RABBITMQ_USER_QUEUE',
+              'user_queue',
+            ),
             queueOptions: {
-              durable: configService.get<boolean>('RABBITMQ_USER_QUEUE_DURABLE', false),
+              durable: configService.get<boolean>(
+                'RABBITMQ_USER_QUEUE_DURABLE',
+                false,
+              ),
             },
           },
         }),

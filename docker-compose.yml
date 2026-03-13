@@ -11,6 +11,7 @@ services:
         condition: service_healthy
     env_file:
       - ./environment/shared/shared.env
+      - ./environment/user.env
     secrets:
       - jwt_public_key
 
@@ -24,6 +25,7 @@ services:
         condition: service_healthy
     env_file:
       - ./environment/shared/shared.env
+      - ./environment/user.env
     secrets:
       - jwt_public_key
 
