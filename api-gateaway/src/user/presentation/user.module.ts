@@ -2,17 +2,31 @@ import { Module } from '@nestjs/common';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { UserController } from './user.controller';
 import { ServiceName } from 'src/shared/infrastructure/enums/service-name.enum';
+import { ConfigService } from '@nestjs/config';
+import { config } from 'process';
 
 @Module({
   imports: [
-    ClientsModule.register([
+    ClientsModule.registerAsync([
       {
         name: ServiceName.USER_SERVICE,
-        transport: Transport.TCP,
-        options: {
-          host: process.env.USER_SERVICE_HOST ?? 'localhost',
-          port: parseInt(process.env.USER_SERVICE_PORT ?? '3001'),
-        },
+        useFactory: (configService: ConfigService) => ({
+          transport: Transport.RMQ,
+          options: {
+            urls: [configService.getOrThrow<string>('RABBITMQ_URL')],
+            queue: configService.get<string>(
+              'RABBITMQ_USER_QUEUE',
+              'user_queue',
+            ),
+            queueOptions: {
+              durable: configService.get<boolean>(
+                'RABBITMQ_USER_QUEUE_DURABLE',
+                false,
+              ),
+            },
+          },
+        }),
+        inject: [ConfigService],
       },
     ]),
   ],
