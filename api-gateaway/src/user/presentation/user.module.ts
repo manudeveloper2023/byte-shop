@@ -13,9 +13,9 @@ import { ConfigService } from '@nestjs/config';
           transport: Transport.RMQ,
           options: {
             urls: [configService.getOrThrow<string>('RABBITMQ_URL')],
-            queue: 'user_queue',
+            queue: configService.get<string>('RABBITMQ_USER_QUEUE', 'user_queue'),
             queueOptions: {
-              durable: false,
+              durable: configService.get<boolean>('RABBITMQ_USER_QUEUE_DURABLE', false),
             },
           },
         }),
